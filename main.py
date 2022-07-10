@@ -3,6 +3,8 @@ from tkinter import messagebox
 import re
 import random
 import pyperclip
+import json
+from PIL import Image, ImageTk
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -33,19 +35,36 @@ def save_data():
     website = entry_website.get()
     email = entry_email.get()
     password = entry_password.get()
+    new_data = {
+        website: {
+            "email": email,
+            "password": password,
+        }
+    }
 
     valid = validation(website, email, password)
 
-    if valid == True:
-        is_ok = messagebox.askokcancel(title=website,
-                                       message=f"The info you entered\nEmail:{email}\npassword:{password}"
-                                               f"\n Is it ok?")
-        if is_ok:
-            data_file = open("passwd.txt", "a")
-            data_file.write(f"{website}|{email}|{password}\n")
-            entry_website.delete(0, END)
-            entry_password.delete(0, END)
-            data_file.close()
+    if valid is True:
+
+        try:
+            with open("data.json", "r") as data_file:
+                # Reading old data
+                data = json.load(data_file)
+
+        except FileNotFoundError:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+
+        else:
+            # Updating old data with new data
+            data.update(new_data)
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
+
+        finally:
+                entry_website.delete(0, END)
+                entry_password.delete(0, END)
+
 
 
 def validation(website, email, password):
@@ -72,36 +91,36 @@ def validation(website, email, password):
 
 window = Tk()
 window.title("Password Manager")
-window.config(padx=50, pady=50)
+window.config(padx=50, pady=50, background="#F2EBE9")
 
-canvas = Canvas(width=200, height=200)
-logo_img = PhotoImage(file='logo.png')
+canvas = Canvas(width=200, height=200, bg="#F2EBE9", highlightthickness=0)
+logo_img = ImageTk.PhotoImage(file="logo5.png")
 canvas.create_image(100, 100, image=logo_img)
-canvas.grid(column=2, row=1)
+canvas.grid(column=1, row=0)
 
 # Labels
 
 label_website = Label(text="Website:")
-label_website.grid(column=1, row=2)
+label_website.grid(column=0, row=1)
 
 label_email = Label(text="Email/Username:")
-label_email.grid(column=1, row=3)
+label_email.grid(column=0, row=2)
 
 label_password = Label(text="Password:")
-label_password.grid(column=1, row=4)
+label_password.grid(column=0, row=3)
 
 # Entries
 
 entry_website = Entry(width=35)
-entry_website.grid(column=2, row=2, columnspan=2)
+entry_website.grid(column=1, row=1)
 entry_website.focus()
 
 entry_email = Entry(width=35)
-entry_email.grid(column=2, row=3, columnspan=2)
+entry_email.grid(column=1, row=2)
 entry_email.insert(0, string="test@gmail.com")
 
-entry_password = Entry(width=24, show="*")
-entry_password.grid(column=2, row=4)
+entry_password = Entry(width=35, show="*")
+entry_password.grid(column=1, row=3)
 
 
 # Checkbutton
@@ -115,14 +134,17 @@ def show_password():
 checked_state = BooleanVar(value=False)
 show_pass_checkbox = Checkbutton(text="Show password", onvalue=True, offvalue=False,
                                  variable=checked_state, command=show_password)
-show_pass_checkbox.grid(column=4, row=4)
+show_pass_checkbox.grid(column=4, row=3)
 
 # Buttons
 
 generate_pass = Button(text="Generate Password", command=generate_password)
-generate_pass.grid(column=3, row=4)
+generate_pass.grid(column=2, row=3)
 
 add_button = Button(text="Add", width=33, command=save_data)
-add_button.grid(column=2, row=5, columnspan=2)
+add_button.grid(column=1, row=4, columnspan=2)
+
+search_button = Button(text="Search")
+search_button.grid(column=2, row=1)
 
 window.mainloop()
