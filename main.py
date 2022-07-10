@@ -87,6 +87,26 @@ def validation(website, email, password):
         return True
 
 
+def search():
+    website = entry_website.get()
+    try:
+        with open("data.json", "r") as data_file:
+            data_dict = json.load(data_file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Oops!", message="Not found!")
+    else:
+        for (key, value) in data_dict.items() :
+            if key == website:
+                messagebox.showinfo(title=f"{website}", message=f"Email: {data_dict[website]['email']}\n"
+                                                                f"Password: {data_dict[website]['password']}")
+    finally:
+        entry_website.delete(0, END)
+        entry_password.delete(0, END)
+
+
+
+
+
 # ---------------------------- UI SETUP ------------------------------- #
 
 window = Tk()
@@ -144,7 +164,7 @@ generate_pass.grid(column=2, row=3)
 add_button = Button(text="Add", width=33, command=save_data)
 add_button.grid(column=1, row=4, columnspan=2)
 
-search_button = Button(text="Search")
+search_button = Button(text="Search", command=search)
 search_button.grid(column=2, row=1)
 
 window.mainloop()
