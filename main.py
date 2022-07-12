@@ -154,17 +154,17 @@ def show_password():
 checked_state = BooleanVar(value=False)
 show_pass_checkbox = Checkbutton(text="Show password", onvalue=True, offvalue=False,
                                  variable=checked_state, command=show_password)
-show_pass_checkbox.grid(column=4, row=3)
+show_pass_checkbox.grid(column=1, row=4)
 
 # Buttons
 
-generate_pass = Button(text="Generate Password", command=generate_password)
+generate_pass = Button(text="Generate Password",width=15, command=generate_password)
 generate_pass.grid(column=2, row=3)
 
 add_button = Button(text="Add", width=33, command=save_data)
-add_button.grid(column=1, row=4, columnspan=2)
+add_button.grid(column=1, row=5)
 
-search_button = Button(text="Search", command=search)
+search_button = Button(text="Search", width=15, command=search)
 search_button.grid(column=2, row=1)
 
 window.mainloop()
